@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController
 {
@@ -35,11 +37,6 @@ class UserController
         $phone = $request->get('phone');
         $password = $request->get('password');
 
-        error_log($username);
-        error_log($email);
-        error_log($phone);
-        error_log($password);
-
         DB::table('users')->insert([
             'username' => $username,
             'email' => $email,
@@ -50,5 +47,31 @@ class UserController
         ]);
 
         return response()->json(['success' => true], 200);
+    }
+
+    public function login(Request $request)
+    {
+        $rules = [
+            'email' => 'required|email',
+            'password' => 'required',
+            'device_name' => 'required',
+        ];
+
+        $input = $request->only('email', 'password', 'device_name');
+        $validator = Validator::make($input, $rules);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'error' => $validator->messages()], 400);
+        }
+
+        $user = User::where('email', $request->get('email'))->first();
+
+        if (!$user || !Hash::check($request->get('password'), $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        return response()->json(['success' => true, 'token' => $user->createToken($request->get('device_name'))->plainTextToken], 200);
     }
 }
