@@ -15,7 +15,6 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController
 {
-
     public function register(Request $request)
     {
         $rules = [
@@ -67,11 +66,20 @@ class UserController
         $user = User::where('email', $request->get('email'))->first();
 
         if (!$user || !Hash::check($request->get('password'), $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+            return response()->json(['success' => false, 'error' => 'The provided credentials are incorrect.'], 401);
         }
 
         return response()->json(['success' => true, 'token' => $user->createToken($request->get('device_name'))->plainTextToken], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $user->tokens()->where('tokenable_id', $user->id)->delete();
+        } catch (\Exception $e) {
+            return response()->json(['success' => false], 400);
+        }
+        return response()->json(['success' => true], 200);
     }
 }
