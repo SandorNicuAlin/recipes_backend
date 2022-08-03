@@ -21,6 +21,6 @@ class UserRepository
     }
 
     public static function checkCredentials($request, $user): bool {
-        return !(!$user || !Hash::check($request->get('password'), $user->password));
+        return (!$user || !Hash::check($request->get('password'), $user->password));
     }
 }
