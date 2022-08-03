@@ -12,6 +12,10 @@ class Ingredient extends Model
     protected $table = 'ingredients';
     protected $guarded = [];
 
+    public function products() {
+        return $this->belongsToMany(Product::class);
+    }
+
     public function recipe() {
         return $this->belongsToMany(Recipe::class);
     }

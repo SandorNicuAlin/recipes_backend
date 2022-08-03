@@ -11,4 +11,8 @@ class Group extends Model
 
     protected $table = 'group';
     protected $guarded = [];
+
+    public function users() {
+        return $this->belongsToMany(User::class);
+    }
 }
