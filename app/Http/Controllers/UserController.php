@@ -13,10 +13,11 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
 use App\Services\FormValidation;
 use App\Repositories\UserRepository;
+use phpDocumentor\Reflection\Types\String_;
 
 class UserController
 {
-    public function register(Request $request)
+    public function register(Request $request): \Illuminate\Http\JsonResponse
     {
         // input validation
         $validator = FormValidation::validate(
@@ -44,7 +45,7 @@ class UserController
         return response()->json(['success' => true], 200);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): \Illuminate\Http\JsonResponse
     {
         // input validation
         $validator = FormValidation::validate(
@@ -70,7 +71,7 @@ class UserController
         return response()->json(['success' => true, 'token' => $user->createToken($request->get('device_name'))->plainTextToken], 200);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
             $user = $request->user();
@@ -79,5 +80,10 @@ class UserController
             return response()->json(['success' => false], 400);
         }
         return response()->json(['success' => true], 200);
+    }
+
+    public function show(Request $request): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(['user' => $request->user()]);
     }
 }

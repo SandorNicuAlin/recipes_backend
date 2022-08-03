@@ -15,8 +15,8 @@ class User extends Authenticatable
     protected $table = 'users';
     protected $guarded = [];
 
-    public function group() {
-        return $this->belongsTo(Group::class);
+    public function groups() {
+        return $this->belongsToMany(Group::class);
     }
 
     /**

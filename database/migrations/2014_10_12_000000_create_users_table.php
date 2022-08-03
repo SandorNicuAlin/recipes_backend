@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('phone');
             $table->timestamps();
             $table->string('password');
-            $table->foreignId('group_id')->default(1);
         });
     }
 
