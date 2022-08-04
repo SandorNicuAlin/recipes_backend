@@ -56,7 +56,6 @@ class UserController
                 'device_name' => 'required',
             ]
         );
-
         if ($validator->fails()) {
             return response()->json(['success' => false, 'error' => $validator->messages()], 400);
         }
@@ -85,5 +84,39 @@ class UserController
     public function show(Request $request): \Illuminate\Http\JsonResponse
     {
         return response()->json(['user' => $request->user()]);
+    }
+
+    public function edit(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $selector = $request->get('selector');
+        $value = $request->get('value');
+
+        // input validation
+        $rule = '';
+        switch ($selector) {
+            case 'username':
+                $rule = "unique:users|required|min:3";
+                break;
+            case 'email':
+                $rule = "unique:users|required|email";
+                break;
+            case 'phone':
+                $rule = "required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10";
+                break;
+        }
+        $rules = [
+            $selector => $rule,
+        ];
+
+        $validator = Validator::make([$selector => $value], [$selector => $rule]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'error' => $validator->messages()], 400);
+        }
+
+        //edit user
+        UserRepository::editUser($request->user()->id, $selector, $value);
+
+        return response()->json(['success' => true], 200);
     }
 }
