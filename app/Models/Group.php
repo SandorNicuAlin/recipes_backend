@@ -9,7 +9,7 @@ class Group extends Model
 {
     use HasFactory;
 
-    protected $table = 'group';
+    protected $table = 'groups';
     protected $guarded = [];
 
     public function users() {
