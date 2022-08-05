@@ -91,32 +91,34 @@ class UserController
         $selector = $request->get('selector');
         $value = $request->get('value');
 
-        // input validation
-        $rule = '';
-        switch ($selector) {
-            case 'username':
-                $rule = "unique:users|required|min:3";
-                break;
-            case 'email':
-                $rule = "unique:users|required|email";
-                break;
-            case 'phone':
-                $rule = "required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10";
-                break;
+        // check if the user didn't change anything, if he did we perform the changes in db
+        if($value !== $request->user()[$selector]){
+            // input validation
+            $rule = '';
+            switch ($selector) {
+                case 'username':
+                    $rule = "unique:users|required|min:3";
+                    break;
+                case 'email':
+                    $rule = "unique:users|required|email";
+                    break;
+                case 'phone':
+                    $rule = "required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10";
+                    break;
+            }
+            $rules = [
+                $selector => $rule,
+            ];
+
+            $validator = Validator::make([$selector => $value], [$selector => $rule]);
+
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'error' => $validator->messages()], 400);
+            }
+
+            //edit user
+            UserRepository::editUser($request->user()->id, $selector, $value);
         }
-        $rules = [
-            $selector => $rule,
-        ];
-
-        $validator = Validator::make([$selector => $value], [$selector => $rule]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'error' => $validator->messages()], 400);
-        }
-
-        //edit user
-        UserRepository::editUser($request->user()->id, $selector, $value);
-
         return response()->json(['success' => true], 200);
     }
 }
