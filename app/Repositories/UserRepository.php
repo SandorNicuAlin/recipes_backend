@@ -23,4 +23,8 @@ class UserRepository
     public static function checkCredentials($request, $user): bool {
         return (!$user || !Hash::check($request->get('password'), $user->password));
     }
+
+    public static function editUser($user_id, $selector, $value): void {
+        User::where('id', $user_id)->update([$selector => $value]);
+    }
 }
