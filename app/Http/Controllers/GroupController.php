@@ -14,4 +14,9 @@ class GroupController extends Controller
         return response()->json(['groups' => $user->groups], 200);
 
     }
+
+    public function show(Request $request)
+    {
+        return response()->json(['groups' => Group::all()] ,200);
+    }
 }

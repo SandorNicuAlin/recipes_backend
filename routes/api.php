@@ -21,8 +21,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/logout', [\App\Http\Controllers\UserController::class, 'logout'])->name('logout');
     // edit one field of a user by passing the field dynamically
     Route::post('/edit', [\App\Http\Controllers\UserController::class, 'edit'])->name('edit-user');
-    // get all groups from an user
+    // get all groups for an user
     Route::get('/user/groups', [\App\Http\Controllers\GroupController::class, 'getAllForUser'])->name('user-groups');
+    // get all groups
+    Route::get('/groups', [\App\Http\Controllers\GroupController::class, 'show'])->name('get-groups');
 });
 
 // create user
