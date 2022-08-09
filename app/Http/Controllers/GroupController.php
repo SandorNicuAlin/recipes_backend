@@ -11,8 +11,12 @@ class GroupController extends Controller
     public function getAllForUser(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = User::where('id', $request->user()->id)->first();
-        return response()->json(['groups' => $user->groups], 200);
-
+        $groups = $user->groups;
+        foreach ($groups as $group) {
+            $groupModel = Group::where('id', $group['id'])->first();
+            $group['members'] = $groupModel->users;
+        }
+        return response()->json(['groups' => $groups], 200);
     }
 
     public function show(Request $request)
