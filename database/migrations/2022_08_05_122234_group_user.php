@@ -17,6 +17,8 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('group_id')->unsigned();
             $table->integer('user_id')->unsigned();
+            $table->timestamps();
+            $table->boolean('administrator')->default(false);
         });
     }
 

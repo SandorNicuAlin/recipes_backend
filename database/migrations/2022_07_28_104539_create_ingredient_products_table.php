@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ingredient_products', function (Blueprint $table) {
-            $table->id();
+        Schema::create('ingredient_product', function (Blueprint $table) {
+            $table->increments('id');
             $table->integer('ingredient_id')->unsigned();
             $table->integer('product_id')->unsigned();
             $table->timestamps();
