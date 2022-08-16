@@ -25,6 +25,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/user/groups', [\App\Http\Controllers\GroupController::class, 'getAllForUser'])->name('user-groups');
     // get all groups
     Route::get('/groups', [\App\Http\Controllers\GroupController::class, 'show'])->name('get-groups');
+    // create group
+    Route::post('/create-group', [\App\Http\Controllers\GroupController::class, 'add'])->name('create-group');
 });
 
 // create user

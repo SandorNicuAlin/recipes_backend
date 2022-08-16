@@ -106,9 +106,6 @@ class UserController
                     $rule = "required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10";
                     break;
             }
-            $rules = [
-                $selector => $rule,
-            ];
 
             $validator = Validator::make([$selector => $value], [$selector => $rule]);
 
