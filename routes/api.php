@@ -27,6 +27,12 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/groups', [\App\Http\Controllers\GroupController::class, 'show'])->name('get-groups');
     // create group
     Route::post('/create-group', [\App\Http\Controllers\GroupController::class, 'add'])->name('create-group');
+    // send notification to members that you want to add to a group
+    Route::post('/groups/add-members-notification', [\App\Http\Controllers\GroupController::class, 'addMembersNotification'])->name('group-add-members-notification');
+    // add members to a group
+    Route::post('groups/add-members', [\App\Http\Controllers\GroupController::class, 'addMembers'])->name('group-add-members');
+    // give administrator privileges to a member of a group
+    Route::post('/groups/make-administrator', [\App\Http\Controllers\GroupController::class, 'makeAdministrator'])->name('make-administrator');
 });
 
 // create user
