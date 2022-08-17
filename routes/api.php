@@ -33,6 +33,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('groups/add-members', [\App\Http\Controllers\GroupController::class, 'addMembers'])->name('group-add-members');
     // give administrator privileges to a member of a group
     Route::post('/groups/make-administrator', [\App\Http\Controllers\GroupController::class, 'makeAdministrator'])->name('make-administrator');
+    // get all notifications by user
+    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'getAllByUser'])->name('notifications');
+    // delete notification
+    Route::post('notifications/delete', [\App\Http\Controllers\NotificationController::class, 'remove'])->name('delete-notification');
 });
 
 // create user

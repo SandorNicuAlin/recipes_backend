@@ -55,6 +55,10 @@ class GroupController extends Controller
         if(!Group::where('id', $request->get('group_id'))->exists()) {
             return response()->json(['success' => false, 'error' => 'This group does not exist'], 400);
         }
+        // check if the logged-in user is an administrator of this group
+        if(GroupUser::where('group_id', $request->get('group_id'))->where('user_id', $request->user()['id'])->first()->is_administrator === 0) {
+            return response()->json(['success' => false, 'error' => 'You are not an administrator of this group'], 400);
+        }
 
         // for every new member
         foreach ($request->get('new_members') as $member_id) {
@@ -87,19 +91,22 @@ class GroupController extends Controller
 
         // check if the group still exist
         if(!Group::where('id', $group_id)->exists()) {
+            Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->delete();
             return response()->json(['success' => false, 'error' => 'Unfortunately this group does not exist anymore'], 400);
         }
         // check if the user is already a member of this group
         if(GroupUser::where('group_id', $group_id)->where('user_id', $user->id)->exists()) {
+            Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->update(['seen' => 1]);
             return response()->json(['success' => false, 'error' => 'You are already a member of this group'], 400);
         }
         // check if the user was invited to the group
         if(!Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->exists()) {
+            Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->delete();
             return response()->json(['success' => false, 'error' => 'Something went wrong'], 400);
         }
 
         $user->groups()->attach($group);
-        Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->first()->delete();
+        Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->update(['seen' => 1]);
 
         return response()->json(['success' => true], 200);
     }
