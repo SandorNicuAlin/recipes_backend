@@ -11,8 +11,8 @@ class NotificationRespository
     {
         DB::table('notifications')->insert([
             'user_id' => $user_id,
-            'type' => 'group_invite',
-            'text' => $who_invited . ' ' . 'invited you to join the group' . ' ' . $group,
+            'type' => "group_invite [$group->id]",
+            'text' => "$who_invited invited you to join the group $group->name",
             'created_at' => now(),
             'updated_at' => now(),
         ]);

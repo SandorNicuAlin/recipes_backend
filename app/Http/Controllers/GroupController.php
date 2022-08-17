@@ -72,7 +72,7 @@ class GroupController extends Controller
             NotificationRespository::addGroupMember(
                 $member_id,
                 $request->user()->username,
-                Group::where('id', $request->get('group_id'))->first()->name,
+                Group::where('id', $request->get('group_id'))->first(),
             );
         }
 
@@ -81,6 +81,26 @@ class GroupController extends Controller
 
     public function addMembers(Request $request): \Illuminate\Http\JsonResponse
     {
+        $group_id = $request->get('group_id');
+        $group = Group::where('id', $group_id)->first();
+        $user = $request->user();
+
+        // check if the group still exist
+        if(!Group::where('id', $group_id)->exists()) {
+            return response()->json(['success' => false, 'error' => 'Unfortunately this group does not exist anymore'], 400);
+        }
+        // check if the user is already a member of this group
+        if(GroupUser::where('group_id', $group_id)->where('user_id', $user->id)->exists()) {
+            return response()->json(['success' => false, 'error' => 'You are already a member of this group'], 400);
+        }
+        // check if the user was invited to the group
+        if(!Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->exists()) {
+            return response()->json(['success' => false, 'error' => 'Something went wrong'], 400);
+        }
+
+        $user->groups()->attach($group);
+        Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->first()->delete();
+
         return response()->json(['success' => true], 200);
     }
 
