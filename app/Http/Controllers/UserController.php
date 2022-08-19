@@ -123,6 +123,6 @@ class UserController
     public function getAllThatDontBelongToGroup(Request $request): \Illuminate\Http\JsonResponse
     {
         $members_of_this_group = GroupUser::where('group_id', $request->get('group_id'))->pluck('user_id')->toArray();
-        return response()->json(['non_members_of_group' => User::all()->whereNotIn('id', $members_of_this_group)], 200);
+        return response()->json(['non_members_of_group' => User::whereNotIn('id', $members_of_this_group)->get()], 200);
     }
 }
