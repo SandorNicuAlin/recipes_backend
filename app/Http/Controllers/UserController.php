@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GroupUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -117,5 +118,11 @@ class UserController
             UserRepository::editUser($request->user()->id, $selector, $value);
         }
         return response()->json(['success' => true], 200);
+    }
+
+    public function getAllThatDontBelongToGroup(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $members_of_this_group = GroupUser::where('group_id', $request->get('group_id'))->pluck('user_id')->toArray();
+        return response()->json(['non_members_of_group' => User::all()->whereNotIn('id', $members_of_this_group)], 200);
     }
 }

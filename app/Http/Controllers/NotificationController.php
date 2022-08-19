@@ -24,7 +24,6 @@ class NotificationController extends Controller
             return response()->json(['success' => false, 'error' => 'Something went wrong'], 400);
         }
 
-
         Notification::where('id', $notification_id)->delete();
 
         return response()->json(['success' => true], 200);

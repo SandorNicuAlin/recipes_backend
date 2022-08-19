@@ -21,6 +21,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/logout', [\App\Http\Controllers\UserController::class, 'logout'])->name('logout');
     // edit one field of a user by passing the field dynamically
     Route::post('/edit', [\App\Http\Controllers\UserController::class, 'edit'])->name('edit-user');
+    // get all users that don't belong to a specific group
+    Route::post('user/all-that-dont-belong-to-group', [\App\Http\Controllers\UserController::class, 'getAllThatDontBelongToGroup'])->name('users-that-dont-belong-to-group');
     // get all groups for an user
     Route::get('/user/groups', [\App\Http\Controllers\GroupController::class, 'getAllForUser'])->name('user-groups');
     // get all groups
