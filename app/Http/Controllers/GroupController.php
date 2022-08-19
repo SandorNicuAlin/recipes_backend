@@ -51,12 +51,14 @@ class GroupController extends Controller
 
     public function addMembersNotification(Request $request): \Illuminate\Http\JsonResponse
     {
+
+        $group_id = $request->get('group_id');
         // check if the group exist
-        if(!Group::where('id', $request->get('group_id'))->exists()) {
+        if(!Group::where('id', $group_id)->exists()) {
             return response()->json(['success' => false, 'error' => 'This group does not exist'], 400);
         }
         // check if the logged-in user is an administrator of this group
-        if(GroupUser::where('group_id', $request->get('group_id'))->where('user_id', $request->user()['id'])->first()->is_administrator === 0) {
+        if(GroupUser::where('group_id', $group_id)->where('user_id', $request->user()['id'])->first()->is_administrator === 0) {
             return response()->json(['success' => false, 'error' => 'You are not an administrator of this group'], 400);
         }
 
@@ -67,8 +69,13 @@ class GroupController extends Controller
                 return response()->json(['success' => false, 'error' => 'One of the users does not exist'] , 400);
             }
             // check if this user is already a member of this group
-            if(GroupUser::where('group_id', $request->get('group_id'))->where('user_id', $member_id)->exists()) {
+            if(GroupUser::where('group_id', $group_id)->where('user_id', $member_id)->exists()) {
                 return response()->json(['success' => false, 'error' => 'One of the users is already a member of this group'], 400);
+            }
+            // check if this new member does not have already an invitation to this group
+            if(Notification::where('user_id', $member_id)->where('type', "group_invite [$group_id]")->exists())
+            {
+                continue;
             }
 
             // send notification to this user
