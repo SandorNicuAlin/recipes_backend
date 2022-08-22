@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\GroupUser;
 use App\Models\User;
 use Carbon\Carbon;
@@ -122,7 +123,14 @@ class UserController
 
     public function getAllThatDontBelongToGroup(Request $request): \Illuminate\Http\JsonResponse
     {
-        $members_of_this_group = GroupUser::where('group_id', $request->get('group_id'))->pluck('user_id')->toArray();
-        return response()->json(['non_members_of_group' => User::whereNotIn('id', $members_of_this_group)->get()], 200);
+        // check if the group exist
+        if(!Group::where('id', $request->get('group_id'))->exists()) {
+            return response()->json(['success' => false, 'error' => 'This group does not exist'], 400);
+        }
+        // get all the users that don't belong to this group
+        $nonmembers_of_this_group = User::whereNotIn('id', GroupUser::where('group_id', $request->get('group_id'))->pluck('user_id')->toArray());
+        // filter the users by a given text
+        $filtered_users = $nonmembers_of_this_group->where('username', 'LIKE', '%'.$request->get('filter_text').'%')->get();
+        return response()->json(['filtered_nonmembers' => $filtered_users], 200);
     }
 }
