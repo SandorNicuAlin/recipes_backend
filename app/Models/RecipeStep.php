@@ -12,11 +12,13 @@ class RecipeStep extends Model
     protected $table = 'recipe_steps';
     protected $guarded = [];
 
-    public function recipe() {
+    public function recipe(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Recipe::class);
     }
 
-    public function ingredients() {
+    public function ingredients(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
         return $this->belongsToMany(Ingredient::class);
     }
 }
