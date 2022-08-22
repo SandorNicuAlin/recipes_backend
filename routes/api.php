@@ -39,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'getAllByUser'])->name('notifications');
     // delete notification
     Route::post('notifications/delete', [\App\Http\Controllers\NotificationController::class, 'remove'])->name('delete-notification');
+    // get all recipes
+    Route::post('recipes', [\App\Http\Controllers\RecipeController::class, 'show'])->name('get-recipes');
 });
 
 // create user

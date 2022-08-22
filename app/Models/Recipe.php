@@ -11,7 +11,8 @@ class Recipe extends Model
     protected $table = 'recipes';
     protected $guarded = [];
 
-    public function group() {
+    public function group(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Group::class);
     }
 }
