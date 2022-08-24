@@ -43,6 +43,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('recipes', [\App\Http\Controllers\RecipeController::class, 'show'])->name('get-recipes');
     // get all recipe-steps for a given recipe
     Route::post('recipe-steps' , [\App\Http\Controllers\RecipeStepController::class, 'show'])->name('get-recipe-steps');
+    // get all products in stock
+    Route::get('product-stock', [\App\Http\Controllers\ProductStockController::class, 'show'])->name('get-product-stock');
+    // add products to stock (create product as well if it does not already exist)
+    Route::post('add-product-stock', [\App\Http\Controllers\ProductStockController::class, 'create'])->name('create-product-stock');
 });
 
 // create user
