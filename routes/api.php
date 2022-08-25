@@ -47,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('product-stock', [\App\Http\Controllers\ProductStockController::class, 'show'])->name('get-product-stock');
     // add products to stock (create product as well if it does not already exist)
     Route::post('add-product-stock', [\App\Http\Controllers\ProductStockController::class, 'create'])->name('create-product-stock');
+    // get all products filtered by text input
+    Route::post('products', [\App\Http\Controllers\ProductController::class, 'show'])->name('get-products');
 });
 
 // create user

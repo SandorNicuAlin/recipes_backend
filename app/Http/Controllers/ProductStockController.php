@@ -26,7 +26,7 @@ class ProductStockController extends Controller
         $validator = FormValidation::validate(
             $request,
             [
-                "quantity" => "required|numeric|lt:10000|gt:0",
+                "quantity" => "required|numeric|gt:0|lt:10000",
                 "product.name" => "required|max:30",
                 "product.um" => "required|max:10",
             ]
