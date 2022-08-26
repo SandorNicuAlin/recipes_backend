@@ -25,4 +25,28 @@ class ProductStockRepository
             ]);
         }
     }
+
+    public static function updateQuantity($value, $product_stock_id) : void
+    {
+        ProductStock::find($product_stock_id)->update(['quantity' => $value]);
+    }
+
+    public static function incrementQuantity($product_stock_id) : void
+    {
+        ProductStock::find($product_stock_id)->increment('quantity');
+    }
+
+    public static function decrementQuantity($product_stock_id) : void
+    {
+        $product_stock = ProductStock::find($product_stock_id);
+        $product_stock->decrement('quantity');
+        if($product_stock->quantity <= 0){
+            $product_stock->delete();
+        }
+    }
+
+    public static function deleteProductStock($product_stock_id) : void
+    {
+        ProductStock::find($product_stock_id)->delete();
+    }
 }

@@ -42,4 +42,63 @@ class ProductStockController extends Controller
 
         return response()->json(['success' => true], 200);
     }
+
+    public function update(Request $request): \Illuminate\Http\JsonResponse
+    {
+
+        $product_stock_id = $request->get('product_stock_id');
+
+        // check if the quantity is between 0 and 10000
+        if($request->get('value') <= 0 || $request->get('value') >= 10000) {
+            return response()->json(['success' => false, 'error' => 'Something went wrong'], 400);
+        }
+
+        // check if the product is not in stock
+        if(!ProductStock::where('id', $product_stock_id)->exists())
+        {
+            return response()->json(['success' => false, 'error' => 'Something went wrong'], 400);
+        }
+
+        ProductStockRepository::updateQuantity($request->get('value'), $product_stock_id);
+
+        return response()->json(['success' => true], 200);
+    }
+
+    public function incrementDecrementQuantity(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $product_stock_id = $request->get('product_stock_id');
+
+        // check if the product is not in stock
+        if(!ProductStock::where('id', $product_stock_id)->exists())
+        {
+            return response()->json(['success' => false, 'error' => 'Something went wrong'], 400);
+        }
+
+        // check if incrementing or decrementing
+        if($request->get('is_incrementing')) {
+            ProductStockRepository::incrementQuantity($product_stock_id);
+            if(ProductStock::find($product_stock_id)->quantity > 10000) {
+                return response()->json(['success' => false, 'error' => 'Quantity can have a value of maximum 10000'], 400);
+            }
+        } else {
+            ProductStockRepository::decrementQuantity($product_stock_id);
+        }
+
+        return response()->json(['success' => true], 200);
+    }
+
+    public function remove(Request $request)
+    {
+        $product_stock_id = $request->get('product_stock_id');
+
+        // check if the product is not in stock
+        if(!ProductStock::where('id', $product_stock_id)->exists())
+        {
+            return response()->json(['success' => false, 'error' => 'Something went wrong'], 400);
+        }
+
+        ProductStockRepository::deleteProductStock($product_stock_id);
+
+        return response()->json(['success' => true], 200);
+    }
 }

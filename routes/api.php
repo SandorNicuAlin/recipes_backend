@@ -46,7 +46,13 @@ Route::middleware('auth:sanctum')->group(function() {
     // get all products in stock
     Route::get('product-stock', [\App\Http\Controllers\ProductStockController::class, 'show'])->name('get-product-stock');
     // add products to stock (create product as well if it does not already exist)
-    Route::post('add-product-stock', [\App\Http\Controllers\ProductStockController::class, 'create'])->name('create-product-stock');
+    Route::post('product-stock/add', [\App\Http\Controllers\ProductStockController::class, 'create'])->name('create-product-stock');
+    // update the quantity of a product from stock
+    Route::post('product-stock/update', [\App\Http\Controllers\ProductStockController::class, 'update'])->name('update-product-stock');
+    // increment or decrement the quantity of a product from stock
+    Route::post('product-stock/increment-decrement', [\App\Http\Controllers\ProductStockController::class, 'incrementDecrementQuantity'])->name('increment-decrement-product-stock');
+    // remove product from stock
+    Route::post('product-stock/remove', [\App\Http\Controllers\ProductStockController::class, 'remove'])->name('remove-product-stock');
     // get all products filtered by text input
     Route::post('products', [\App\Http\Controllers\ProductController::class, 'show'])->name('get-products');
 });
