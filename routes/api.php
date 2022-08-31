@@ -41,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('notifications/delete', [\App\Http\Controllers\NotificationController::class, 'remove'])->name('delete-notification');
     // get all recipes
     Route::post('recipes', [\App\Http\Controllers\RecipeController::class, 'show'])->name('get-recipes');
+    // add recipe with its specific recipe-steps
+    Route::post('recipes/add', [\App\Http\Controllers\RecipeController::class, 'add'])->name('add-recipe');
     // get all recipe-steps for a given recipe
     Route::post('recipe-steps' , [\App\Http\Controllers\RecipeStepController::class, 'show'])->name('get-recipe-steps');
     // get all products in stock
