@@ -18,6 +18,7 @@ class RecipeController extends Controller
 
     public function add(Request $request): \Illuminate\Http\JsonResponse
     {
+//        error_log($request->get('description'));
         // check if the group exist
         if(!Group::where('id', $request->get('group_id'))->exists()) {
             return response()->json(['success' => false, 'error' => 'This group no longer exist'], 400);
@@ -27,13 +28,15 @@ class RecipeController extends Controller
             return response()->json(['success' => false, 'error' => 'You are not an administrator of this group'], 400);
         }
 
+        if(count($request->get('recipe_steps')) === 0) {
+            return response()->json(['success' => false, 'error' => 'Please add some steps to your recipe'], 400);
+        }
+
         // input validation -> name, description, recipe_steps[i].name, recipe_steps[i].description
         $validator = FormValidation::validate(
             $request,
             [
-                "name" => "required|max:15",
-                "recipe_steps.*.name" => "required|max:25",
-                "recipe_steps.*.description" => "required",
+                "name" => "required|max:15|min:2",
             ]
         );
         if ($validator->fails()) {
