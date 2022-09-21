@@ -8,6 +8,7 @@ use App\Models\Recipe;
 use App\Repositories\RecipeRepository;
 use App\Services\FormValidation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RecipeController extends Controller
 {
@@ -42,10 +43,9 @@ class RecipeController extends Controller
         if ($validator->fails()) {
             return response()->json(['success' => false, 'error' => $validator->messages()], 400);
         }
-
         // create recipe with its recipe-steps
         RecipeRepository::createRecipeWithSteps($request->get('name'), $request->get('description'), $request->get('recipe_steps'), $request->get('group_id'));
 
-        return response()->jsoN(['success' => true], 200);
+        return response()->json(['success' => true], 200);
     }
 }
