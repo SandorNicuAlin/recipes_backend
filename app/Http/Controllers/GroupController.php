@@ -44,7 +44,7 @@ class GroupController extends Controller
         $group = GroupRepository::createGroup($request->get('name'));
 
         // attach this user to the group as administrator
-        $user->groups()->attach($group, ['is_administrator' => true]);
+        $user->groups()->attach($group, ['is_administrator' => true, 'created_at' => now(), 'updated_at' => now()]);
 
         return response()->json(['success' => true], 200);
     }
@@ -112,7 +112,7 @@ class GroupController extends Controller
             return response()->json(['success' => false, 'error' => 'Something went wrong'], 400);
         }
 
-        $user->groups()->attach($group);
+        $user->groups()->attach($group, ['created_at' => now(), 'updated_at' => now()]);
         Notification::where('user_id', $user->id)->where('type', "group_invite [$group_id]")->update(['seen' => 1]);
 
         return response()->json(['success' => true], 200);

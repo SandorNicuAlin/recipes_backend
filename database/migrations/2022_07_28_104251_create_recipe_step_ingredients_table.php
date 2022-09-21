@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('recipe_step_ingredients', function (Blueprint $table) {
+        Schema::create('ingredient_recipe_step', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('receipt_step_id');
             $table->foreignId('ingredient_id');
+            $table->foreignId('recipe_step_id');
             $table->timestamps();
         });
     }

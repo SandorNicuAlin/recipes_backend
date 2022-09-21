@@ -12,11 +12,13 @@ class Ingredient extends Model
     protected $table = 'ingredients';
     protected $guarded = [];
 
-    public function products() {
+    public function products(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
         return $this->belongsToMany(Product::class);
     }
 
-    public function recipe_steps() {
+    public function recipe_steps(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
         return $this->belongsToMany(RecipeStep::class);
     }
 }
