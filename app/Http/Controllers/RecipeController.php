@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use App\Models\GroupUser;
+use App\Models\Ingredient;
+use App\Models\ProductStock;
 use App\Models\Recipe;
 use App\Repositories\RecipeRepository;
 use App\Services\FormValidation;
@@ -15,6 +17,17 @@ class RecipeController extends Controller
     public function show(Request $request): \Illuminate\Http\JsonResponse
     {
         return response()->json(['recipes' => Recipe::whereIn('group_id', $request->get('groups'))->get()], 200);
+    }
+
+    public function getAvailable(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $recipes = Recipe::where('group_id', $request->get('group_id'));
+        $products_stock = ProductStock::all();
+        foreach($recipes as $recipe) {
+            $ingredients = Ingredient::where('recipe_id', $recipe['id']);
+
+        }
+        return response()->json(['success' => true], 200);
     }
 
     public function add(Request $request): \Illuminate\Http\JsonResponse
