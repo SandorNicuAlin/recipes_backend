@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Group;
 use App\Models\GroupUser;
 use App\Models\Ingredient;
+use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\Recipe;
 use App\Repositories\RecipeRepository;
 use App\Services\FormValidation;
+use App\Services\CompareArrays;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -21,13 +23,20 @@ class RecipeController extends Controller
 
     public function getAvailable(Request $request): \Illuminate\Http\JsonResponse
     {
-        $recipes = Recipe::where('group_id', $request->get('group_id'));
-        $products_stock = ProductStock::all();
-        foreach($recipes as $recipe) {
-            $ingredients = Ingredient::where('recipe_id', $recipe['id']);
+        $available_recipes = [];
+        // get all the recipes available for the group that the user is part of
+        $recipes = Recipe::whereIn('group_id', $request->get('groups'))->get();
+        Log::alert($recipes);
+        // get all the products in stock
+        $products_stock = ProductStock::all()->map(function($product) {return ['name' => Product::where('id', $product['product_id'])->get('name')[0]['name'], 'quantity' => $product['quantity']];})->toArray();
 
+        foreach($recipes as $recipe) {
+            // get a recipe and compare its ingredients to the products in stock and if they are available in stock add it to the available_recipes array
+            if(CompareArrays::compare_name_and_quantity(Ingredient::where('recipe_id', $recipe['id'])->get()->toArray(), $products_stock)) {
+                $available_recipes[] = $recipe;
+            }
         }
-        return response()->json(['success' => true], 200);
+        return response()->json(['recipes' => $available_recipes], 200);
     }
 
     public function add(Request $request): \Illuminate\Http\JsonResponse
