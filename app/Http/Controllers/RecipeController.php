@@ -59,7 +59,7 @@ class RecipeController extends Controller
         $validator = FormValidation::validate(
             $request,
             [
-                "name" => "required|max:15|min:2",
+                "name" => "required|max:30|min:2",
             ]
         );
         if ($validator->fails()) {
