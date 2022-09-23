@@ -6,7 +6,8 @@ namespace App\Repositories;
 use App\Models\Recipe;
 use App\Models\RecipeStep;
 use App\Models\Ingredient;
-use App\Models\Product;
+use App\Models\IngredientRecipeStep;
+use App\Models\IngredientProduct;
 
 class RecipeRepository
 {
@@ -35,5 +36,22 @@ class RecipeRepository
                 $recipe_step->ingredients()->attach($ingredient_eloquent->fresh(), ['created_at' => now(), 'updated_at' => now()]);
             }
         }
+    }
+
+    public static function delete(string $recipe_id): void
+    {
+        $recipe = Recipe::where('id' , $recipe_id);
+        $recipe_steps = RecipeStep::where('recipe_id', $recipe_id);
+        $ingredients = Ingredient::where('recipe_id', $recipe_id);
+
+        $recipe->delete();
+        foreach ($recipe_steps->get() as $recipe_step) {
+            IngredientRecipeStep::where('recipe_step_id', $recipe_step['id'])->delete();
+        }
+        foreach($ingredients->get() as $ingredient) {
+            IngredientProduct::where('ingredient_id', $ingredient['id'])->delete();
+        }
+        $recipe_steps->delete();
+        $ingredients->delete();
     }
 }
