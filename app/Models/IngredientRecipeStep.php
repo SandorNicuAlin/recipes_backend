@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class IngredientRecipeStep extends Model
 {
     use HasFactory;
-    protected $table = 'recipe_step_ingredients';
+    protected $table = 'ingredient_recipe_step';
     protected $guarded = [];
 
 }

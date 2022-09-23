@@ -41,14 +41,9 @@ class RecipeController extends Controller
 
     public function add(Request $request): \Illuminate\Http\JsonResponse
     {
-//        error_log($request->get('description'));
-        // check if the group exist
-        if(!Group::where('id', $request->get('group_id'))->exists()) {
-            return response()->json(['success' => false, 'error' => 'This group no longer exist'], 400);
-        }
-        // check if the logged-in user is an administrator of this group
-        if(GroupUser::where('group_id', $request->get('group_id'))->where('user_id', $request->user()['id'])->first()->is_administrator === 0) {
-            return response()->json(['success' => false, 'error' => 'You are not an administrator of this group'], 400);
+        // check if the group exist and if the logged-in user is an administrator of this group
+        if($this->check_if_group_exist_and_user_is_admin($request)) {
+            return $this->check_if_group_exist_and_user_is_admin($request);
         }
 
         if(count($request->get('recipe_steps')) === 0) {
@@ -69,5 +64,36 @@ class RecipeController extends Controller
         RecipeRepository::createRecipeWithSteps($request->get('name'), $request->get('description'), $request->get('recipe_steps'), $request->get('group_id'));
 
         return response()->json(['success' => true], 200);
+    }
+
+    public function remove(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $recipe_id = $request->get('recipe_id');
+        // check if the group exist and if the logged-in user is an administrator of this group
+        if($this->check_if_group_exist_and_user_is_admin($request)) {
+            return $this->check_if_group_exist_and_user_is_admin($request);
+        }
+        // check if the recipe exist
+        if(!Recipe::where('id', $recipe_id)->exists()){
+            return response()->json(['success' => false, 'error' => 'This recipe does not exist anymore']);
+        }
+
+        // delete the recipe
+        RecipeRepository::delete($recipe_id);
+
+        return response()->json(['success' => true], 200);
+    }
+
+    protected function check_if_group_exist_and_user_is_admin(Request $request): ?\Illuminate\Http\JsonResponse
+    {
+        // check if the group exist
+        if(!Group::where('id', $request->get('group_id'))->exists()) {
+            return response()->json(['success' => false, 'error' => 'This group no longer exist'], 400);
+        }
+        // check if the logged-in user is an administrator of this group
+        if(GroupUser::where('group_id', $request->get('group_id'))->where('user_id', $request->user()['id'])->first()->is_administrator === 0) {
+            return response()->json(['success' => false, 'error' => 'You are not an administrator of this group'], 400);
+        }
+        return null;
     }
 }
