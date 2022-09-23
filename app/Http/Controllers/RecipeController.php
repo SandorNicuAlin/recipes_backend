@@ -10,7 +10,7 @@ use App\Models\ProductStock;
 use App\Models\Recipe;
 use App\Repositories\RecipeRepository;
 use App\Services\FormValidation;
-use App\Services\CompareArrays;
+use App\Services\WorkWithArrays;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -26,13 +26,12 @@ class RecipeController extends Controller
         $available_recipes = [];
         // get all the recipes available for the group that the user is part of
         $recipes = Recipe::whereIn('group_id', $request->get('groups'))->get();
-        Log::alert($recipes);
         // get all the products in stock
         $products_stock = ProductStock::all()->map(function($product) {return ['name' => Product::where('id', $product['product_id'])->get('name')[0]['name'], 'quantity' => $product['quantity']];})->toArray();
 
         foreach($recipes as $recipe) {
             // get a recipe and compare its ingredients to the products in stock and if they are available in stock add it to the available_recipes array
-            if(CompareArrays::compare_name_and_quantity(Ingredient::where('recipe_id', $recipe['id'])->get()->toArray(), $products_stock)) {
+            if(WorkWithArrays::compare_name_and_quantity(Ingredient::where('recipe_id', $recipe['id'])->get()->toArray(), $products_stock)) {
                 $available_recipes[] = $recipe;
             }
         }
