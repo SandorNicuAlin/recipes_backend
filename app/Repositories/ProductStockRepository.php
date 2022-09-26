@@ -49,4 +49,15 @@ class ProductStockRepository
     {
         ProductStock::find($product_stock_id)->delete();
     }
+
+    public static function deleteOrDecreaseQuantity($product_stock, $ingredient): void
+    {
+        if($product_stock->first()->quantity > $ingredient['quantity']) {
+            // decrease the quantity
+            $product_stock->update(['quantity' => ((float)$product_stock->first()->quantity - (float)$ingredient['quantity'])]);
+        } else {
+            // delete the product
+            $product_stock->delete();
+        }
+    }
 }

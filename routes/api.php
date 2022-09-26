@@ -59,6 +59,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('product-stock/increment-decrement', [\App\Http\Controllers\ProductStockController::class, 'incrementDecrementQuantity'])->name('increment-decrement-product-stock');
     // remove product from stock
     Route::post('product-stock/remove', [\App\Http\Controllers\ProductStockController::class, 'remove'])->name('remove-product-stock');
+    // remove products from stock that match a specific recipe's ingredients
+    Route::post('product-stock/remove-for-recipe', [\App\Http\Controllers\ProductStockController::class, 'removeForRecipe'])->name('remove-product-stock-for-recipe');
     // get all products filtered by text input
     Route::post('products', [\App\Http\Controllers\ProductController::class, 'show'])->name('get-products');
 });
