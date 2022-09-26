@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ingredient;
+use App\Models\IngredientProduct;
 use App\Models\Product;
 use App\Models\ProductStock;
+use App\Models\Recipe;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductStockRepository;
 use App\Services\FormValidation;
@@ -87,7 +90,7 @@ class ProductStockController extends Controller
         return response()->json(['success' => true], 200);
     }
 
-    public function remove(Request $request)
+    public function remove(Request $request): \Illuminate\Http\JsonResponse
     {
         $product_stock_id = $request->get('product_stock_id');
 
@@ -99,6 +102,26 @@ class ProductStockController extends Controller
 
         ProductStockRepository::deleteProductStock($product_stock_id);
 
+        return response()->json(['success' => true], 200);
+    }
+
+    public function removeForRecipe(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $recipe_id = $request->get('recipe_id');
+        // check if the recipe does exist
+        if(!Recipe::where('id', $request->get('recipe_id'))->exists()) {
+            return response()->json(['success' => false, 'error' => 'This recipe does not exist']);
+        }
+
+        foreach(Ingredient::where('recipe_id', $recipe_id)->get() as $ingredient) {
+            $product_stock = ProductStock::where('product_id', IngredientProduct::where('ingredient_id', $ingredient['id'])->first()->product_id);
+            // check if the product exists in stock or the quantity is grater than the quantity required by the recipe (if not, the recipe is not available)
+            if(!$product_stock->exists() || $product_stock->first()->quantity < $ingredient['quantity']) {
+                return response()->json(['success' => false, 'error' => 'This recipe is not available']);
+            }
+            // check if the product quantity is equal or grater than the quantity required by the recipe
+            ProductStockRepository::deleteOrDecreaseQuantity($product_stock, $ingredient);
+        }
         return response()->json(['success' => true], 200);
     }
 }
