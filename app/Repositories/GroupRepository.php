@@ -25,6 +25,6 @@ class GroupRepository
     }
 
     public static function createGroup($name) {
-        return Group::factory()->create(['name' => $name]);
+        return Group::create(['name' => $name]);
     }
 }
