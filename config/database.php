@@ -47,7 +47,7 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => $DATABASE_URL ?? env('DATABASE_URL'),
+            'url' => $DATABASE_URL['path'] ?? env('DATABASE_URL'),
             'host' => $DATABASE_URL['host'] ?? env('DB_HOST', '127.0.0.1'),
             'port' => $DATABASE_URL ?? env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'forge'),
