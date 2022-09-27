@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => isset($DATABASE_URL) ? 'mysql' : env('DB_CONNECTION', 'mysql-config'),
+    'default' => isset($DATABASE_URL['host']) ? 'mysql' : env('DB_CONNECTION', 'mysql-config'),
 
     /*
     |--------------------------------------------------------------------------
@@ -50,12 +50,12 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => $DATABASE_URL['host'] ?? env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => isset($DATABASE_URL['path']) ? substr($DATABASE_URL['path'], 1) : env('DB_DATABASE', 'recipes'),
+            'database' => isset($DATABASE_URL['host']) ? substr($DATABASE_URL['path'], 1) : env('DB_DATABASE', 'forge'),
             'username' => $DATABASE_URL['user'] ?? env('DB_USERNAME', 'forge'),
             'password' => $DATABASE_URL['pass'] ?? env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => isset($DATABASE_URL) ? 'utf8' :'utf8mb4',
-            'collation' => isset($DATABASE_URL) ? 'utf8_unicode_ci' : 'utf8mb4_unicode_ci',
+            'charset' => isset($DATABASE_URL['host']) ? 'utf8' : 'utf8mb4',
+            'collation' => isset($DATABASE_URL['host']) ? 'utf8_unicode_ci' : 'utf8mb4_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
@@ -151,3 +151,4 @@ return [
     ],
 
 ];
+
