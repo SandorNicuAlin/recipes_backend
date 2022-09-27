@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql-config'),
+    'default' => isset($DATABASE_URL) ? 'mysql' : env('DB_CONNECTION', 'mysql-config'),
 
     /*
     |--------------------------------------------------------------------------
