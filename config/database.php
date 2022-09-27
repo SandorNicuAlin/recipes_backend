@@ -50,7 +50,7 @@ return [
             'url' => $DATABASE_URL['path'] ?? env('DATABASE_URL'),
             'host' => $DATABASE_URL['host'] ?? env('DB_HOST', '127.0.0.1'),
             'port' => $DATABASE_URL['port'] ?? env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'recipes'),
+            'database' => $DATABASE_URL['scheme'] ?? env('DB_DATABASE', 'recipes'),
             'username' => $DATABASE_URL['user'] ?? env('DB_USERNAME', 'forge'),
             'password' => $DATABASE_URL['pass'] ?? env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
